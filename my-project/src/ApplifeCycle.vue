@@ -16,12 +16,6 @@
       </button>
     </div>
     <div>哇哦，你喜欢的是【{{ selectWater }}】啊！</div>
-
-    <div><button @click="overAction">选择完毕</button></div>
-    <div>{{ overText }}</div>
-
-    <div>{{ nowTime }}</div>
-    <div><button @click="getNowTime">显示时间</button></div>
   </div>
 </template>
 
@@ -31,9 +25,14 @@ import {
   ref,
   reactive,
   toRefs,
-  watch,
+  onBeforeMount,
+  onMounted,
+  onUnmounted,
+  onBeforeUpdate,
+  onUpdated,
+  onRenderTracked,
+  onRenderTriggered,
 } from "vue";
-import { nowTime, getNowTime } from "./hooks/useNowTime";
 
 // toRefs形式，所需的接口限制
 interface DataProp {
@@ -51,11 +50,7 @@ export default defineComponent({
       selectFood.value = foods.value[i];
     };
 
-    const overText = ref("罗卜大");
-    const overAction = () => {
-      overText.value = overText.value + "  |  选择完成";
-      //   document.title = overText.value;
-    };
+    // reactive形式，搭配toRefs效果更佳
     const data: DataProp = reactive({
       waters: ["长江", "黄河", "黄海"],
       selectWater: "",
@@ -64,24 +59,54 @@ export default defineComponent({
       },
     });
     const refData = toRefs(data);
-    watch([overText, () => data.selectWater], (newValue, oldValue) => {
-      console.log(`new---->${newValue}`);
-      console.log(`old---->${oldValue}`);
-      document.title = newValue[0];
+    console.log("1-开始创建组件-----setup");
+    onBeforeMount(() => {
+      console.log("2-组件挂在到页面之前执行-----onBeforeMount");
     });
-   
+    onMounted(() => {
+      console.log("3-组件挂载到页面之后执行-----onMounted");
+    });
+    onBeforeUpdate(() => {
+      console.log("4-组件更新之前执行-----onBeforeUpdate");
+    });
+    onUpdated(() => {
+      console.log("5-组件更新之后执行-----onUpdated");
+    });
+    // 跟踪页面所有的响应式变化
+    // onRenderTracked((e) => {
+    //   console.log("状态跟踪钩子函数");
+    //   console.log(e);
+    // });
+    onRenderTriggered((e) => {
+      console.log("状态跟踪钩子函数------->");
+      console.log(e);
+    });
+
     return {
       foods,
       selectFood,
       selectFoodFun,
-      overText,
-      overAction,
-      nowTime,
-      getNowTime,
+
       // toRefs形式
       ...refData,
     };
   },
+  // Vue2的生命周期
+  // beforeCreate(){
+  //   console.log('1.1-组件创建之前执行*****beforeCreate')
+  // },
+  // beforeMount() {
+  //   console.log('2.1-组件挂载到页面之前执行******beforeMount')
+  // },
+  // mounted(){
+  //   console.log('3.1-组件挂载到页面之后执行*****mounted')
+  // },
+  // beforeUpdate() {
+  //   console.log('4.1-组件更新之前执行******beforeUpdate')
+  // },
+  // updated(){
+  //   console.log('5.1-组件更新之后执行*****updated')
+  // }
 });
 </script>
 
