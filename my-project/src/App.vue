@@ -64,6 +64,7 @@ export default defineComponent({
       },
     });
     const refData = toRefs(data);
+    // 箭头函数是seter的方式，
     watch([overText, () => data.selectWater], (newValue, oldValue) => {
       console.log(`new---->${newValue}`);
       console.log(`old---->${oldValue}`);
